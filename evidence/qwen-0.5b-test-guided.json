@@ -1,0 +1,49 @@
+{
+  "mode": "local_llm",
+  "strategy": "test_guided",
+  "scope": "Four public synthetic tasks; held-out-from-prompt regression cases; not a general coding benchmark.",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "task": "shipping",
+      "status": "rejected",
+      "attempts": 3,
+      "gate_passed": false,
+      "tokens": 870,
+      "elapsed_ms": 12388,
+      "expression": "fee if total <= threshold else 0",
+      "error": null
+    },
+    {
+      "task": "pagination",
+      "status": "rejected",
+      "attempts": 2,
+      "gate_passed": false,
+      "tokens": 550,
+      "elapsed_ms": 8301,
+      "expression": "ceil(total / page_size)",
+      "error": null
+    },
+    {
+      "task": "access",
+      "status": "rejected",
+      "attempts": 1,
+      "gate_passed": false,
+      "tokens": 238,
+      "elapsed_ms": 4356,
+      "expression": "return owner_id == actor_id and is_admin",
+      "error": null
+    },
+    {
+      "task": "retry",
+      "status": "rejected",
+      "attempts": 3,
+      "gate_passed": false,
+      "tokens": 940,
+      "elapsed_ms": 11213,
+      "expression": "min(base * attempt, cap)",
+      "error": null
+    }
+  ]
+}

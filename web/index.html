@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PatchProof — AI engineering, with evidence</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/"
+        ><span class="logo">⌘</span> PatchProof<span class="beta"
+          >ENGINEERING LAB</span
+        ></a
+      >
+      <div class="connection">
+        <i id="led"></i><span id="connection">Checking local model</span>
+      </div>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">AI FOR THE SOFTWARE DEVELOPMENT LIFECYCLE</p>
+          <h1>A patch is a proposal.<br /><em>Make it prove itself.</em></h1>
+          <p class="intro">
+            A local coding model. A real diff. Independent regression checks. Explore
+            the engineering that turns AI suggestions into reviewable changes.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="tiny">THE DELIVERY CONTRACT</div>
+          <div><b>01</b> Understand the bug</div>
+          <div><b>02</b> Propose a bounded change</div>
+          <div><b>03</b> Verify, then ask a human</div>
+          <span>Qwen 1.5B · local CPU · no API credits</span>
+        </div>
+      </section>
+      <section class="controls">
+        <div class="control task-control">
+          <label for="task">01 / PICK A BUG REPORT</label
+          ><select id="task"></select>
+        </div>
+        <div class="control">
+          <label for="mode">02 / PROPOSAL SOURCE</label
+          ><select id="mode">
+            <option value="local_llm">Local AI · Qwen Coder</option>
+            <option value="fixture_good">Fixture · correct patch</option>
+            <option value="fixture_overfit">
+              Fixture · overfits public tests
+            </option>
+            <option value="fixture_unsafe">Fixture · unsafe expression</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="strategy">03 / AGENT STRATEGY</label
+          ><select id="strategy">
+            <option value="test_guided">Test-guided · up to 3 attempts</option>
+            <option value="context_only">Context only · one attempt</option>
+          </select>
+        </div>
+        <button id="run" class="primary">
+          Investigate & patch <span>↗</span>
+        </button>
+      </section>
+      <div class="statusbar">
+        <p id="message" role="status" aria-live="polite">
+          Choose a ticket and start a run. The agent works only on disposable
+          demo fixtures.
+        </p>
+        <span id="run-status" class="badge">READY</span>
+      </div>
+      <section class="stats">
+        <article>
+          <span>PUBLIC REPRODUCTION</span><strong id="visible">— / 2</strong
+          ><small>Does it fix the reported bug?</small>
+        </article>
+        <article>
+          <span>REGRESSION GATE</span><strong id="holdout">— / 8</strong
+          ><small>Does it preserve other behavior?</small>
+        </article>
+        <article>
+          <span>MODEL TOKENS</span><strong id="tokens">—</strong
+          ><small>Actual provider usage · fixtures use zero</small>
+        </article>
+        <article>
+          <span>RUN DURATION</span><strong id="duration">—</strong
+          ><small>Inference + validation + verification</small>
+        </article>
+      </section>
+      <section class="workgrid">
+        <article class="panel ticket">
+          <div class="panelhead">
+            <div>
+              <p class="eyebrow">THE ENGINEERING TASK</p>
+              <h2 id="ticket-title">Loading tickets…</h2>
+            </div>
+            <span id="ticket-id" class="badge"></span>
+          </div>
+          <div class="body">
+            <p id="description"></p>
+            <div class="filetitle">
+              <span id="filename"></span><span>PYTHON</span>
+            </div>
+            <pre id="source" class="code"></pre>
+            <details open>
+              <summary>Public reproduction cases</summary>
+              <div id="repros"></div>
+            </details>
+            <div class="callout" id="lesson"></div>
+          </div>
+        </article>
+        <article class="panel trace">
+          <div class="panelhead">
+            <div>
+              <p class="eyebrow">OBSERVABLE EXECUTION</p>
+              <h2>From ticket to evidence</h2>
+            </div>
+            <span class="badge">LIVE TRACE</span>
+          </div>
+          <div id="trace" class="tracebody">
+            <div class="empty">
+              <span>↳</span>
+              <h3>Watch the work, not just the answer.</h3>
+              <p>
+                Context assembly, model calls, policy decisions, test results,
+                and approval appear here.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+      <section class="workgrid resultgrid">
+        <article class="panel">
+          <div class="panelhead">
+            <div>
+              <p class="eyebrow">PROPOSED CHANGE</p>
+              <h2>A diff you can review</h2>
+            </div>
+            <span id="attempts" class="badge">NO PROPOSAL</span>
+          </div>
+          <div class="body">
+            <div id="proposal-summary" class="muted">
+              The model's explanation will appear here. Verification is computed
+              separately.
+            </div>
+            <pre id="diff" class="code diff">No patch yet.</pre>
+            <details>
+              <summary>Model calls & context</summary>
+              <div id="model-detail" class="detail"></div>
+            </details>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panelhead">
+            <div>
+              <p class="eyebrow">HUMAN CONTROL</p>
+              <h2>Approve an exact artifact</h2>
+            </div>
+            <span id="gate-state" class="badge">WAITING</span>
+          </div>
+          <div class="body">
+            <div id="gate-detail" class="callout neutral">
+              The gate requires all public and regression cases to pass. The
+              model cannot edit tests or approve its own change.
+            </div>
+            <p class="muted" id="digest">
+              Artifact SHA-256 appears after verification.
+            </p>
+            <label for="note">REVIEW NOTE</label
+            ><textarea
+              id="note"
+              placeholder="What did you check in the patch and its tests?"
+              rows="3"
+              maxlength="500"
+            ></textarea>
+            <div class="actions">
+              <button id="approve" disabled>Approve patch</button
+              ><a
+                id="download"
+                class="button secondary disabled"
+                aria-disabled="true"
+                >Download .diff</a
+              >
+            </div>
+            <p id="approval" class="muted">
+              Approval only unlocks a patch download. It does not push, merge,
+              or edit your repositories.
+            </p>
+          </div>
+        </article>
+      </section>
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <p class="eyebrow">INDEPENDENT VERIFICATION</p>
+            <h2>Inspect the test outcomes</h2>
+          </div>
+          <a id="report" class="disabled" aria-disabled="true"
+            >Export run JSON ↗</a
+          >
+        </div>
+        <div class="body tablewrap" id="tests">
+          <p class="muted">
+            Regression cases are withheld from the model prompt and retry
+            feedback. They are revealed here after the final gate.
+          </p>
+        </div>
+      </section>
+      <section class="workgrid">
+        <article class="panel">
+          <div class="panelhead">
+            <h2>Experiment scoreboard</h2>
+            <span class="badge">LOCAL HISTORY</span>
+          </div>
+          <div class="body tablewrap" id="scoreboard"></div>
+          <p class="footnote">
+            Last 100 runs. Mixed tasks and repeated seeds; these figures are
+            exploratory, not a general model benchmark. Fixture results are
+            separate.
+          </p>
+        </article>
+        <article class="panel">
+          <div class="panelhead"><h2>Replay the evidence</h2></div>
+          <div class="body">
+            <label for="history">SAVED RUNS</label
+            ><select id="history">
+              <option value="">Choose a previous run…</option>
+            </select>
+            <p class="muted">
+              Every run saves its prompt, model output, usage, patch, test
+              outcomes and review decision in local SQLite. Reopening a run
+              makes no new model calls.
+            </p>
+            <div class="callout">
+              Try <b>overfits public tests</b> to see why fixing an example is
+              different from fixing a bug. Then try the real model with both
+              strategies.
+            </div>
+          </div>
+        </article>
+      </section>
+      <footer>
+        <span>BOUNDED PYTHON REPAIRS · LOCAL INFERENCE · HUMAN REVIEW</span
+        ><span
+          ><a href="/docs">API docs ↗</a> ·
+          <a
+            href="https://github.com/cws1121/patchproof"
+            target="_blank"
+            rel="noreferrer"
+            >Source & learning guide ↗</a
+          ></span
+        >
+      </footer>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -6,9 +6,24 @@
 
 The project demonstrates the engineering around an AI coding workflow: source context, structured model output, execution limits, test-feedback retries, regression gates, traces, evaluation and human control.
 
+**Python · FastAPI · llama.cpp · Qwen Coder · Python AST · Git · SQLite**
+
+[Run the demo](#run-it) · [Five-minute walkthrough](#five-minute-demo) · [Architecture](#what-happens-in-a-run) · [Measured results](evidence/RESULTS.md) · [Interview discussion](docs/INTERVIEW.md)
+
+## Reviewer snapshot
+
+| Engineering question | What this project demonstrates |
+|---|---|
+| How is model output checked independently? | Frozen public/regression cases, bounded retries and a final gate whose cases never enter retry feedback. |
+| What may a proposed patch execute? | A restricted expression interpreter; no `eval`, `exec`, imports or arbitrary tool calls. |
+| How does a person retain control? | Approval is bound to the verified artifact SHA; rejected patches cannot be exported. |
+| What has been verified? | 23 tests pass; all four correct fixtures reach review, and all four overfitting and unsafe fixtures are rejected. |
+
+**Model status:** real Qwen 0.5B inference was evaluated and passed **0/4** tasks under this contract. Those failures are preserved in the [evaluation report](evidence/RESULTS.md). The configured Qwen 1.5B upgrade is **not yet benchmarked**. For the fully verified review workflow, begin with `python run.py --fixtures-only`; fixture proposals are explicitly labeled and are not model-generated.
+
 ## Run it
 
-**Tested platform: Windows x64, Python 3.12, Git on PATH, CPU inference.**
+**Tested environment: Windows x64, Python 3.12, Git on PATH; fixture workflow and Qwen 0.5B baseline verified on CPU.**
 
 ```sh
 python run.py
@@ -24,7 +39,7 @@ python run.py --fixtures-only
 
 Select one of the clearly labeled **Fixture** proposal sources. These are deterministic test inputs, **not AI inference**. The real patch application, policy checks, test worker, approval gate and export still run.
 
-On Linux/macOS, use Python 3.12 and Git, install `llama-server` from the [official llama.cpp project](https://github.com/ggml-org/llama.cpp), then run `python3 run.py`. Automatic binary setup and the end-to-end demo were verified on Windows; other platforms are not yet validated. The launcher expects the pinned runtime's CLI options.
+On Linux/macOS, use Python 3.12 and Git, install `llama-server` from the [official llama.cpp project](https://github.com/ggml-org/llama.cpp), then run `python3 run.py`. Automatic binary setup, the fixture workflow and smaller-model inference were verified on Windows; the configured 1.5B inference and other platforms are not yet validated. The launcher expects the pinned runtime's CLI options.
 
 ## Five-minute demo
 
@@ -151,3 +166,8 @@ See [interview walkthrough](docs/INTERVIEW.md) for discussion prompts and a conc
 - [Qwen2.5-Coder-1.5B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF), Apache 2.0; upstream model license applies to the downloaded artifact.
 - [llama.cpp](https://github.com/ggml-org/llama.cpp), MIT; pinned Windows release `b11026`.
 - Direct Python dependencies are pinned; `requirements-lock.txt` records the tested Windows/Python 3.12 environment.
+
+## Related portfolio projects
+
+- [Document AI Workbench](https://github.com/cws1121/document-ai-workbench): neural OCR, source evidence and auditable review.
+- [ML Drift Control Room](https://github.com/cws1121/ml-drift-control-room): drift monitoring, independent evaluation and model promotion.
